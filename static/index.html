@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Temperature, fan control and site status for the Raspberry Pi 5.">
+<meta name="robots" content="noindex">
+<title>Pi 5</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<main>
+  <header>
+    <h1>Pi 5</h1>
+    <nav role="tablist" aria-label="Sections">
+      <button role="tab" id="t-dashboard" aria-selected="true" aria-controls="dashboard">Dashboard</button>
+      <button role="tab" id="t-performance" aria-selected="false" aria-controls="performance">Performance</button>
+      <button role="tab" id="t-processes" aria-selected="false" aria-controls="processes">Processes</button>
+      <button role="tab" id="t-sites" aria-selected="false" aria-controls="sites">Sites</button>
+    </nav>
+  </header>
+
+  <section id="dashboard" role="tabpanel" aria-labelledby="t-dashboard">
+    <dl class="readout">
+      <div><dt>Temperature</dt><dd id="temp">–</dd></div>
+      <div><dt>CPU load</dt><dd id="cpu">–</dd></div>
+      <div><dt>Memory</dt><dd id="mem">–</dd></div>
+      <div><dt>Clock</dt><dd id="mhz">–</dd></div>
+      <div><dt>Uptime</dt><dd id="uptime">–</dd></div>
+    </dl>
+
+    <div class="dash">
+      <div class="block">
+        <h2>Temperature over the last 5 minutes</h2>
+        <svg id="chart" class="chart" role="img" aria-label="Temperature over time"></svg>
+        <dl class="facts" id="t-facts"></dl>
+      </div>
+
+      <div class="side">
+        <div class="block">
+          <h2>Profile</h2>
+          <div class="seg" id="profiles" role="group" aria-label="Performance profile">
+            <button data-p="quiet" aria-pressed="false">Quiet</button>
+            <button data-p="balanced" aria-pressed="false">Balanced</button>
+            <button data-p="turbo" aria-pressed="false">Turbo</button>
+          </div>
+          <p id="profile-note" class="hint"></p>
+        </div>
+
+        <div class="block">
+          <h2>Fan</h2>
+          <div class="seg" role="group" aria-label="Fan mode">
+            <button id="m-auto" aria-pressed="true">Automatic</button>
+            <button id="m-manual" aria-pressed="false">Manual</button>
+          </div>
+          <label for="slider"><span>Speed</span><span id="pct">–</span></label>
+          <input id="slider" type="range" min="0" max="100" step="5" value="0" disabled>
+          <p class="hint" id="rpm">–</p>
+          <p id="notice" class="warn" hidden></p>
+          <p class="hint" id="limit"></p>
+        </div>
+
+        <div class="block">
+          <h2>Power and throttling</h2>
+          <p id="health" class="hint">–</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="performance" role="tabpanel" aria-labelledby="t-performance" hidden>
+    <div class="perf">
+      <ul class="res" id="res"></ul>
+      <div class="detail">
+        <h2 id="d-title">CPU</h2>
+        <svg id="d-chart" class="chart" role="img" aria-label="History, last 5 minutes"></svg>
+        <p class="hint" id="d-scale"></p>
+        <dl class="facts" id="d-facts"></dl>
+        <div class="cores" id="cores"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="processes" role="tabpanel" aria-labelledby="t-processes" hidden>
+    <div class="block" style="border-top:0;padding-top:0">
+      <input id="q" type="search" placeholder="Filter by name or user" aria-label="Filter processes">
+      <div class="scroll">
+        <table>
+          <thead><tr>
+            <th aria-sort="none"><button data-k="name">Name</button></th>
+            <th aria-sort="none"><button data-k="user">User</button></th>
+            <th class="n" aria-sort="descending"><button data-k="cpu">CPU</button></th>
+            <th class="n" aria-sort="none"><button data-k="mem">Memory</button></th>
+            <th class="n" aria-sort="none"><button data-k="pid">PID</button></th>
+          </tr></thead>
+          <tbody id="pbody"></tbody>
+        </table>
+      </div>
+      <p class="hint">Read-only. CPU is the share of the whole processor. Showing the top 60.</p>
+    </div>
+  </section>
+
+  <section id="sites" role="tabpanel" aria-labelledby="t-sites" hidden>
+    <div class="block">
+      <h2>Sites</h2>
+      <ul class="rows" id="site-list"><li class="hint">Checking…</li></ul>
+      <p class="hint">Checked through Nginx on this Pi, every 10 seconds.</p>
+    </div>
+    <div class="block">
+      <h2>Services</h2>
+      <ul class="rows" id="service-list"><li class="hint">Checking…</li></ul>
+    </div>
+  </section>
+</main>
+<script src="app.js"></script>
+<script src="perf.js"></script>
+</body>
+</html>
